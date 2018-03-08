@@ -98,6 +98,7 @@ import { GraphService } from "../services/graph.service";
             </li>
             <li class="upload" onclick="pushToRemote()"><a href="#">&nbsp;&nbsp;pull</a></li>
             <li class="download"onclick="pullFromRemote()"><a href="#">&nbsp;&nbsp;push</a></li>
+            <li class="clean" onclick="cleanRepo()"><a href="#">&nbsp;&nbsp;Clean</a></li>
           </ul>
         </div>
       </div>
