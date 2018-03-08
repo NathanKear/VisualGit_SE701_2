@@ -655,3 +655,36 @@ function displayModifiedFiles() {
     console.log("waiting for repo to be initialised");
   });
 }
+
+function cleanRepo() {
+  console.log("cleanRepo()");
+
+  Git.Repository.open(repoFullPath)
+  .then(function(repository: Repository) {
+    console.log("cleanRepo() - A");
+    
+    repository.getStatus().then(function(arrayStatusFile: StatusFile[]) {
+
+      console.log("cleanRepo() - B");
+
+      let filesToClean: String[] = [];
+
+      arrayStatusFile.forEach(function(statusFile: StatusFile) {
+        console.log("cleanRepo() - B - " + statusFile);
+
+        console.log("in working tree = " + statusFile.inWorkingTree());
+        console.log("in index = " + statusFile.inIndex());
+        console.log("is new = " + statusFile.isNew());
+
+        if (statusFile.isNew()) {
+          filesToClean.push(<string>statusFile.path());
+
+        }
+      });
+
+      
+      console.log("files to clean - " + filesToClean);
+
+    })
+  });
+}
