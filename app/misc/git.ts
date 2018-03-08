@@ -656,35 +656,41 @@ function displayModifiedFiles() {
   });
 }
 
-function cleanRepo() {
-  console.log("cleanRepo()");
-
+function cleanCurrentRepo() {
   Git.Repository.open(repoFullPath)
-  .then(function(repository: Repository) {
-    console.log("cleanRepo() - A");
-    
-    repository.getStatus().then(function(arrayStatusFile: StatusFile[]) {
+    .then(cleanRepo)
+    .then(function(repository: Repository) {
+      refreshAll(repository);
+      displayModifiedFiles();
+    });
+}
 
-      console.log("cleanRepo() - B");
+function cleanRepo(repository: Repository) {
+  repository.getStatus()
+    .then(removeUntrackedFiles);
 
-      let filesToClean: String[] = [];
+  return repository;
+}
 
-      arrayStatusFile.forEach(function(statusFile: StatusFile) {
-        console.log("cleanRepo() - B - " + statusFile);
+function removeUntrackedFiles(arrayStatusFile: StatusFile[]) {
+  let filesToClean: String[] = [];
 
-        console.log("in working tree = " + statusFile.inWorkingTree());
-        console.log("in index = " + statusFile.inIndex());
-        console.log("is new = " + statusFile.isNew());
+  arrayStatusFile.forEach(function(statusFile: StatusFile) {
 
-        if (statusFile.isNew()) {
-          filesToClean.push(<string>statusFile.path());
+    // Files marked as new are untracked, hence should be removed
+    // Files removed with fs as nodegit does not have implementation of git clean
+    if (statusFile.isNew()) {
+      filesToClean.push(<string>statusFile.path());
+      let filePath: string = <string>statusFile.path()
 
-        }
-      });
+      removeFile(statusFile);
+    }
 
-      
-      console.log("files to clean - " + filesToClean);
-
-    })
   });
+}
+
+function removeFile(statusFile: StatusFile) {
+  fs.unlink(repoFullPath + '\\' + statusFile.path(), function (err) {
+    if (err) throw err;
+  }); 
 }
