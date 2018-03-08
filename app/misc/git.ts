@@ -667,7 +667,9 @@ function cleanCurrentRepo() {
 
 function cleanRepo(repository: Repository) {
   repository.getStatus()
-    .then(removeUntrackedFiles);
+    .then(function(arrayStatusFile: StatusFile[]) {
+      removeUntrackedFiles(arrayStatusFile);
+    });
 
   return repository;
 }
@@ -683,13 +685,13 @@ function removeUntrackedFiles(arrayStatusFile: StatusFile[]) {
       filesToClean.push(<string>statusFile.path());
       let filePath: string = <string>statusFile.path()
 
-      removeFile(statusFile);
+      removeFileFromRepo(statusFile);
     }
 
   });
 }
 
-function removeFile(statusFile: StatusFile) {
+function removeFileFromRepo(statusFile: StatusFile) {
   fs.unlink(repoFullPath + '\\' + statusFile.path(), function (err) {
     if (err) throw err;
   }); 
