@@ -577,7 +577,7 @@ function displayModifiedFiles() {
             if (fileElement.className === "file file-created") {
               printNewFile(file.filePath);
             } else {
-              printFileDiff(file.filePath)；
+              printFileDiff(file.filePath);
             }
           } else {
             hideDiffPanel();
@@ -660,6 +660,7 @@ function cleanCurrentRepo() {
   Git.Repository.open(repoFullPath)
     .then(cleanRepo)
     .then(function(repository: Repository) {
+      addCommand('git clean -f');
       refreshAll(repository);
       displayModifiedFiles();
     });
